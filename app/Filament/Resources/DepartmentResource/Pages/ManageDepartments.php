@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\DepartmentResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\DepartmentResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Support\Enums\MaxWidth;
 
-class ManageUsers extends ManageRecords
+class ManageDepartments extends ManageRecords
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = DepartmentResource::class;
 
     protected function getHeaderActions(): array
     {

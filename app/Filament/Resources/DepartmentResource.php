@@ -2,63 +2,52 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\DepartmentResource\Pages;
+use App\Models\Department;
 use App\Models\User;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
-class UserResource extends Resource
+class DepartmentResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Department::class;
 
-    protected static ?string $label = 'Data User';
-    protected static ?string $navigationLabel = 'Data User';
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $label = 'Data Bagian';
+    protected static ?string $navigationLabel = 'Data Bagian';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Setting';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Section::make()->schema([
-                TextInput::make('nik')
-                    ->label('NIK')
+                TextInput::make('dp_code')
+                    ->label('Kode Bagian')
                     ->required()
-                    ->unique(User::class, 'nik', ignoreRecord: true),
-                TextInput::make('name')
-                    ->label('Nama')
-                    ->required(),
-                TextInput::make('password')
-                    ->label('Password')
+                    ->unique(Department::class, 'dp_code', ignoreRecord: true),
+                TextInput::make('dp_name')
+                    ->label('Nama Bagian')
                     ->required()
-                    ->password()
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord),
-                Select::make('dp_id')
-                    ->label('Bagian')
-                    ->required()
-                    ->searchable()
-                    ->preload()
-                    ->relationship('department', 'dp_name'),
-                Select::make('role')
-                    ->label('Jabatan')
-                    ->options([
-                        'Direktorat' => 'Direktorat',
-                        'Kabag' => 'Kabag',
-                        'Staff' => 'Staff'
-                    ]),
+                    ->unique(Department::class, 'dp_name', ignoreRecord: true),
+                TextInput::make('dp_group')
+                    ->label('Nama Grup Bagian'),
+                Toggle::make('dp_spr')
+                    ->label('Ketersediaan SPR')
+                    ->default(true),
             ])
         ]);
     }
@@ -75,21 +64,21 @@ class UserResource extends Resource
                     );
                 }
             ),
-            TextColumn::make('nik')
-                ->label('NIK')
-                ->searchable(),
-            TextColumn::make('name')
+            TextColumn::make('dp_code')
+                ->label('Kode')
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('dp_name')
                 ->label('Nama')
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('department.dp_name')
-                ->label('Bagian')
+            TextColumn::make('dp_group')
+                ->label('Grup')
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('role')
-                ->label('Jabatan')
-                ->searchable()
-                ->sortable(),
+            IconColumn::make('dp_spr')
+                ->label('SPR')
+                ->boolean(),
         ];
 
         if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
@@ -113,18 +102,9 @@ class UserResource extends Resource
         return $table
             ->columns(self::getColumns())
             ->filters([
-                SelectFilter::make('dp_id')
-                    ->label('Bagian')
-                    ->relationship('department', 'dp_name')
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('role')
-                    ->label('Jabatan')
-                    ->options([
-                        'Direktorat' => 'Direktorat',
-                        'Kabag' => 'Kabag',
-                        'Staff' => 'Staff'
-                    ]),
+                Filter::make('dp_spr')
+                    ->label('SPR Aktif')
+                    ->query(fn (Builder $query): Builder => $query->where('dp_spr', true))
             ])
             ->actions([
                 ActionGroup::make([
@@ -134,10 +114,10 @@ class UserResource extends Resource
                         ->slideOver()
                         ->stickyModalHeader(),
                     DeleteAction::make()
-                        ->action(fn (User $record) => $record->delete())
+                        ->action(fn (Department $record) => $record->delete())
                         ->requiresConfirmation()
                         ->modalIcon('heroicon-o-trash')
-                        ->modalHeading('Hapus User')
+                        ->modalHeading('Hapus Bagian')
                         ->modalDescription('Apakah yakin ingin menghapus data?')
                         ->modalSubmitActionLabel('Ya'),
                 ])
@@ -148,7 +128,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageUsers::route('/'),
+            'index' => Pages\ManageDepartments::route('/'),
         ];
     }
 }
