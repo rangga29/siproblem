@@ -1,14 +1,21 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Temp;
 
-use App\Filament\Admin\Resources\DepartmentResource\Pages;
-use App\Filament\Admin\Resources\DepartmentResource\RelationManagers;
 use App\Models\Department;
-use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,25 +26,26 @@ class DepartmentResource extends Resource
     protected static ?string $label = 'Data Bagian';
     protected static ?string $navigationLabel = 'Data Bagian';
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('dp_code')
-                            ->label('Department Code')
+                        TextInput::make('dp_code')
+                            ->label('Kode Bagian')
                             ->required()
                             ->unique(Department::class, 'dp_code', ignoreRecord: true),
-                        Forms\Components\TextInput::make('dp_name')
-                            ->label('Department Name')
+                        TextInput::make('dp_name')
+                            ->label('Nama Bagian')
                             ->required()
                             ->unique(Department::class, 'dp_name', ignoreRecord: true),
-                        Forms\Components\TextInput::make('dp_group')
-                            ->label('Department Group'),
-                        Forms\Components\Toggle::make('dp_spr')
-                            ->label('Open SPR Active')
+                        TextInput::make('dp_group')
+                            ->label('Grup Bagian'),
+                        Toggle::make('dp_spr')
+                            ->label('Ketersediaan SPR')
                             ->default(true),
                     ])
             ]);
@@ -47,8 +55,8 @@ class DepartmentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('No')->state(
-                    static function (Tables\Contracts\HasTable $livewire, \stdClass $rowLoop): string {
+                TextColumn::make('No')->state(
+                    static function (HasTable $livewire, \stdClass $rowLoop): string {
                         return (string) (
                             $rowLoop->iteration +
                             ($livewire->getTableRecordsPerPage() * (
@@ -57,30 +65,31 @@ class DepartmentResource extends Resource
                         );
                     }
                 ),
-                Tables\Columns\TextColumn::make('dp_code')
-                    ->label('Code')
+                TextColumn::make('dp_code')
+                    ->label('Kode')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('dp_name')
-                    ->label('Name')
+                TextColumn::make('dp_name')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('dp_spr')
+                IconColumn::make('dp_spr')
                     ->label('SPR')
                     ->boolean(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('dp_spr')
-                    ->label('SPR Active')
+                Filter::make('dp_spr')
+                    ->label('SPR Aktif')
                     ->query(fn (Builder $query): Builder => $query->where('dp_spr', true))
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                EditAction::make()
+                    ->slideOver(),
+                DeleteAction::make()
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -95,9 +104,9 @@ class DepartmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDepartments::route('/'),
-            'create' => Pages\CreateDepartment::route('/create'),
-            'edit' => Pages\EditDepartment::route('/{record}/edit'),
+            'index' => \App\Filament\Temp\DepartmentResource\Pages\ListDepartments::route('/'),
+            'create' => \App\Filament\Temp\DepartmentResource\Pages\CreateDepartment::route('/create'),
+            'edit' => \App\Filament\Temp\DepartmentResource\Pages\EditDepartment::route('/{record}/edit'),
         ];
     }
 }

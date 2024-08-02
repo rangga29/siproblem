@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\DepartmentResource\Pages;
+namespace App\Filament\Temp\DepartmentResource\Pages;
 
-use App\Filament\Admin\Resources\DepartmentResource;
-use Filament\Actions;
+use App\Filament\Temp\DepartmentResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateDepartment extends CreateRecord

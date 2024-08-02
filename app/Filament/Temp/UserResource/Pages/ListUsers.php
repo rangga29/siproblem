@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Filament\Admin\Resources\UserResource\Pages;
+namespace App\Filament\Temp\UserResource\Pages;
 
-use App\Filament\Admin\Resources\UserResource;
-use App\Imports\UsersImport;
+use App\Filament\Temp\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ListUsers extends ListRecords
 {

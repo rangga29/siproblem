@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Admin\Resources\DepartmentResource\Pages;
+namespace App\Filament\Temp\DepartmentResource\Pages;
 
-use App\Filament\Admin\Resources\DepartmentResource;
-use Filament\Actions;
+use App\Filament\Temp\DepartmentResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDepartments extends ListRecords
@@ -13,7 +13,7 @@ class ListDepartments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

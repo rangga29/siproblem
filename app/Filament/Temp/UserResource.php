@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Temp;
 
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -40,6 +41,7 @@ class UserResource extends Resource
                             ->dehydrated(fn($state) => filled($state))
                             ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord),
                         Forms\Components\Select::make('dp_id')
+                            ->label('Department')
                             ->required()
                             ->searchable()
                             ->preload()
@@ -86,7 +88,7 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -106,9 +108,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => \App\Filament\Temp\UserResource\Pages\ListUsers::route('/'),
+            'create' => \App\Filament\Temp\UserResource\Pages\CreateUser::route('/create'),
+            'edit' => \App\Filament\Temp\UserResource\Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
