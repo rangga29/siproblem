@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DepartmentResource\Pages;
 use App\Models\Department;
-use App\Models\User;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -117,7 +116,7 @@ class DepartmentResource extends Resource
                         ->action(fn (Department $record) => $record->delete())
                         ->requiresConfirmation()
                         ->modalIcon('heroicon-o-trash')
-                        ->modalHeading('Hapus Bagian')
+                        ->modalHeading('Hapus Data Bagian')
                         ->modalDescription('Apakah yakin ingin menghapus data?')
                         ->modalSubmitActionLabel('Ya'),
                 ])

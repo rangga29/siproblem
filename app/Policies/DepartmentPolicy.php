@@ -12,12 +12,20 @@ class DepartmentPolicy
 
     public function viewAny(User $user): bool
     {
-        return true;
+        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function view(User $user, Department $department): bool
     {
-        return true;
+        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function create(User $user): bool

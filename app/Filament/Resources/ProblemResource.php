@@ -2,14 +2,13 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Models\User;
+use App\Filament\Resources\ProblemResource\Pages;
+use App\Models\Problem;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
@@ -19,47 +18,54 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
+use function auth;
 
-class UserResource extends Resource
+class ProblemResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Problem::class;
 
-    protected static ?string $label = 'Data User';
-    protected static ?string $navigationLabel = 'Data User';
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $label = 'Data Permasalahan';
+    protected static ?string $navigationLabel = 'Data Permasalahan';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationGroup = 'Setting';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Section::make()->schema([
-                TextInput::make('nik')
-                    ->label('NIK')
+                TextInput::make('pr_name')
+                    ->label('Nama Permasalahan')
                     ->required()
-                    ->unique(User::class, 'nik', ignoreRecord: true),
-                TextInput::make('name')
-                    ->label('Nama')
-                    ->required(),
-                TextInput::make('password')
-                    ->label('Password')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (string $operation, $state, Set $set) {
+                        if($operation !== 'create') { return; }
+                        $set('pr_ucode', Str::random(20));
+                    }),
+                TextInput::make('pr_ucode')
+                    ->label('Kode Permasalahan')
                     ->required()
-                    ->password()
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord),
+                    ->disabled()
+                    ->dehydrated()
+                    ->unique(Problem::class, 'pr_ucode', ignoreRecord: true),
                 Select::make('dp_id')
-                    ->label('Bagian')
+                    ->label('Nama Bagian')
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->relationship('department', 'dp_name'),
-                Select::make('role')
-                    ->label('Jabatan')
-                    ->options([
-                        'Direktorat' => 'Direktorat',
-                        'Kabag' => 'Kabag',
-                        'Staff' => 'Staff'
-                    ]),
+                    ->relationship(
+                        name: 'department',
+                        titleAttribute: 'dp_name',
+                        modifyQueryUsing: function (Builder $query) {
+                            if (auth()->user()->role === 'Administrator' || auth()->user()->department->dp_name === 'SISFO') {
+                                return $query->where('dp_spr', true);
+                            } else {
+                                return $query->where('dp_spr', true)->where('id', auth()->user()->dp_id);
+                            }
+                        },
+                    ),
             ])
         ]);
     }
@@ -76,19 +82,12 @@ class UserResource extends Resource
                     );
                 }
             ),
-            TextColumn::make('nik')
-                ->label('NIK')
-                ->searchable(),
-            TextColumn::make('name')
-                ->label('Nama')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('department.dp_name')
+            Tables\Columns\TextColumn::make('department.dp_name')
                 ->label('Bagian')
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('role')
-                ->label('Jabatan')
+            Tables\Columns\TextColumn::make('pr_name')
+                ->label('Name')
                 ->searchable()
                 ->sortable(),
         ];
@@ -116,16 +115,13 @@ class UserResource extends Resource
             ->filters([
                 SelectFilter::make('dp_id')
                     ->label('Bagian')
-                    ->relationship('department', 'dp_name')
                     ->searchable()
-                    ->preload(),
-                SelectFilter::make('role')
-                    ->label('Jabatan')
-                    ->options([
-                        'Direktorat' => 'Direktorat',
-                        'Kabag' => 'Kabag',
-                        'Staff' => 'Staff'
-                    ]),
+                    ->preload()
+                    ->relationship(
+                        name: 'department',
+                        titleAttribute: 'dp_name',
+                        modifyQueryUsing: fn (Builder $query) => $query->where('dp_spr', true),
+                    ),
             ])
             ->actions([
                 ActionGroup::make([
@@ -135,21 +131,28 @@ class UserResource extends Resource
                         ->slideOver()
                         ->stickyModalHeader(),
                     DeleteAction::make()
-                        ->action(fn (User $record) => $record->delete())
+                        ->action(fn (Problem $record) => $record->delete())
                         ->requiresConfirmation()
                         ->modalIcon('heroicon-o-trash')
-                        ->modalHeading('Hapus Data User')
+                        ->modalHeading('Hapus Data Permasalahan')
                         ->modalDescription('Apakah yakin ingin menghapus data?')
                         ->modalSubmitActionLabel('Ya'),
                 ])
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                if (auth()->user()->role === 'Administrator' || auth()->user()->department->dp_name === 'SISFO') {
+                    return $query;
+                } else {
+                    return $query->where('dp_id', auth()->user()->dp_id);
+                }
+            })
             ->recordAction(null);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageUsers::route('/'),
+            'index' => Pages\ManageProblems::route('/'),
         ];
     }
 }
