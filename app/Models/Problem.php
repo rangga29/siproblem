@@ -12,7 +12,7 @@ class Problem extends Model
 
     public function sprs(): HasMany
     {
-        return $this->hasMany(SPR::class, 'pr_id');
+        return $this->hasMany(Spr::class, 'pr_id');
     }
 
     public function department(): BelongsTo

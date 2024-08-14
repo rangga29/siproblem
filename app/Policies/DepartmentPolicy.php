@@ -12,7 +12,7 @@ class DepartmentPolicy
 
     public function viewAny(User $user): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -21,7 +21,7 @@ class DepartmentPolicy
 
     public function view(User $user, Department $department): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -30,7 +30,7 @@ class DepartmentPolicy
 
     public function create(User $user): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -39,7 +39,7 @@ class DepartmentPolicy
 
     public function update(User $user, Department $department): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -48,7 +48,7 @@ class DepartmentPolicy
 
     public function delete(User $user, Department $department): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -57,7 +57,7 @@ class DepartmentPolicy
 
     public function restore(User $user, Department $department): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;
@@ -66,7 +66,7 @@ class DepartmentPolicy
 
     public function forceDelete(User $user, Department $department): bool
     {
-        if($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if($user->role === 'Administrator') {
             return true;
         } else {
             return false;

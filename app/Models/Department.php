@@ -14,6 +14,11 @@ class Department extends Model
         return $this->hasMany(User::class, 'dp_id');
     }
 
+    public function sprs(): HasMany
+    {
+        return $this->hasMany(Spr::class, 'dp_id');
+    }
+
     public function problems(): HasMany
     {
         return $this->hasMany(Problem::class, 'dp_id');

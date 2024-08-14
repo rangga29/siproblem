@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProblemResource\Pages;
 use App\Models\Problem;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -20,7 +21,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use function auth;
 
 class ProblemResource extends Resource
 {
@@ -29,7 +29,6 @@ class ProblemResource extends Resource
     protected static ?string $label = 'Data Permasalahan';
     protected static ?string $navigationLabel = 'Data Permasalahan';
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationGroup = 'Setting';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -38,20 +37,12 @@ class ProblemResource extends Resource
             Section::make()->schema([
                 TextInput::make('pr_name')
                     ->label('Nama Permasalahan')
-                    ->required()
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (string $operation, $state, Set $set) {
-                        if($operation !== 'create') { return; }
-                        $set('pr_ucode', Str::random(20));
-                    }),
-                TextInput::make('pr_ucode')
-                    ->label('Kode Permasalahan')
-                    ->required()
-                    ->disabled()
-                    ->dehydrated()
+                    ->required(),
+                Hidden::make('pr_ucode')
+                    ->default(Str::random(20))
                     ->unique(Problem::class, 'pr_ucode', ignoreRecord: true),
                 Select::make('dp_id')
-                    ->label('Nama Bagian')
+                    ->label('Nama Unit')
                     ->required()
                     ->searchable()
                     ->preload()
@@ -59,7 +50,7 @@ class ProblemResource extends Resource
                         name: 'department',
                         titleAttribute: 'dp_name',
                         modifyQueryUsing: function (Builder $query) {
-                            if (auth()->user()->role === 'Administrator' || auth()->user()->department->dp_name === 'SISFO') {
+                            if (auth()->user()->role === 'Administrator') {
                                 return $query->where('dp_spr', true);
                             } else {
                                 return $query->where('dp_spr', true)->where('id', auth()->user()->dp_id);
@@ -83,7 +74,7 @@ class ProblemResource extends Resource
                 }
             ),
             Tables\Columns\TextColumn::make('department.dp_name')
-                ->label('Bagian')
+                ->label('Unit')
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('pr_name')
@@ -92,7 +83,7 @@ class ProblemResource extends Resource
                 ->sortable(),
         ];
 
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             $columns[] = TextColumn::make('created_at')
                 ->label('Created At')
                 ->dateTime()
@@ -114,7 +105,7 @@ class ProblemResource extends Resource
             ->columns(self::getColumns())
             ->filters([
                 SelectFilter::make('dp_id')
-                    ->label('Bagian')
+                    ->label('Unit')
                     ->searchable()
                     ->preload()
                     ->relationship(
@@ -140,7 +131,7 @@ class ProblemResource extends Resource
                 ])
             ])
             ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->role === 'Administrator' || auth()->user()->department->dp_name === 'SISFO') {
+                if (auth()->user()->role === 'Administrator') {
                     return $query;
                 } else {
                     return $query->where('dp_id', auth()->user()->dp_id);

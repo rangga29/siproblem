@@ -34,12 +34,7 @@ class User extends Authenticatable
 
     public function statuses(): HasMany
     {
-        return $this->hasMany(Status::class, 'receiver_id');
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class, 'user_id');
+        return $this->hasMany(Status::class, 'user_id');
     }
 
     public function logs(): HasMany

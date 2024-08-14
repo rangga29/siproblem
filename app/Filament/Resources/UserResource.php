@@ -48,7 +48,7 @@ class UserResource extends Resource
                     ->dehydrated(fn($state) => filled($state))
                     ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord),
                 Select::make('dp_id')
-                    ->label('Bagian')
+                    ->label('Unit')
                     ->required()
                     ->searchable()
                     ->preload()
@@ -84,7 +84,7 @@ class UserResource extends Resource
                 ->searchable()
                 ->sortable(),
             TextColumn::make('department.dp_name')
-                ->label('Bagian')
+                ->label('Unit')
                 ->searchable()
                 ->sortable(),
             TextColumn::make('role')
@@ -93,7 +93,7 @@ class UserResource extends Resource
                 ->sortable(),
         ];
 
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             $columns[] = TextColumn::make('created_at')
                 ->label('Created At')
                 ->dateTime()
@@ -115,7 +115,7 @@ class UserResource extends Resource
             ->columns(self::getColumns())
             ->filters([
                 SelectFilter::make('dp_id')
-                    ->label('Bagian')
+                    ->label('Unit')
                     ->relationship('department', 'dp_name')
                     ->searchable()
                     ->preload(),

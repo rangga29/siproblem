@@ -1,11 +1,6 @@
 <div>
-    <x-filament::breadcrumbs :breadcrumbs="[
-            '/users' => 'Users',
-            '' => 'List',
-        ]"
-    />
     <div class="flex justify-between mt-1">
-        <div class="font-bold text-3xl">Students</div>
+        <div class="font-bold text-3xl">User</div>
         <div>
             {{ $data }}
         </div>

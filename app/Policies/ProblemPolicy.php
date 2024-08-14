@@ -14,7 +14,7 @@ class ProblemPolicy
 
     public function viewAny(User $user): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
@@ -29,7 +29,7 @@ class ProblemPolicy
 
     public function view(User $user, Problem $problem): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
@@ -44,16 +44,14 @@ class ProblemPolicy
 
     public function create(User $user): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
-        if ($user->role == 'Kabag') {
-            $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
+        $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
 
-            if (in_array($user->department->dp_name, $departments)) {
-                return true;
-            }
+        if (in_array($user->department->dp_name, $departments)) {
+            return true;
         }
 
         return false;
@@ -61,16 +59,14 @@ class ProblemPolicy
 
     public function update(User $user, Problem $problem): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
-        if ($user->role == 'Kabag') {
-            $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
+        $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
 
-            if (in_array($user->department->dp_name, $departments)) {
-                return true;
-            }
+        if (in_array($user->department->dp_name, $departments)) {
+            return true;
         }
 
         return false;
@@ -78,16 +74,14 @@ class ProblemPolicy
 
     public function delete(User $user, Problem $problem): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
-        if ($user->role == 'Kabag') {
-            $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
+        $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
 
-            if (in_array($user->department->dp_name, $departments)) {
-                return true;
-            }
+        if (in_array($user->department->dp_name, $departments)) {
+            return true;
         }
 
         return false;
@@ -95,16 +89,14 @@ class ProblemPolicy
 
     public function restore(User $user, Problem $problem): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
-        if ($user->role == 'Kabag') {
-            $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
+        $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
 
-            if (in_array($user->department->dp_name, $departments)) {
-                return true;
-            }
+        if (in_array($user->department->dp_name, $departments)) {
+            return true;
         }
 
         return false;
@@ -112,16 +104,14 @@ class ProblemPolicy
 
     public function forceDelete(User $user, Problem $problem): bool
     {
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             return true;
         }
 
-        if ($user->role == 'Kabag') {
-            $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
+        $departments = Department::where('dp_spr', true)->pluck('dp_name')->toArray();
 
-            if (in_array($user->department->dp_name, $departments)) {
-                return true;
-            }
+        if (in_array($user->department->dp_name, $departments)) {
+            return true;
         }
 
         return false;

@@ -24,8 +24,8 @@ class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
 
-    protected static ?string $label = 'Data Bagian';
-    protected static ?string $navigationLabel = 'Data Bagian';
+    protected static ?string $label = 'Data Unit';
+    protected static ?string $navigationLabel = 'Data Unit';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Setting';
     protected static ?int $navigationSort = 4;
@@ -35,15 +35,15 @@ class DepartmentResource extends Resource
         return $form->schema([
             Section::make()->schema([
                 TextInput::make('dp_code')
-                    ->label('Kode Bagian')
+                    ->label('Kode Unit')
                     ->required()
                     ->unique(Department::class, 'dp_code', ignoreRecord: true),
                 TextInput::make('dp_name')
-                    ->label('Nama Bagian')
+                    ->label('Nama Unit')
                     ->required()
                     ->unique(Department::class, 'dp_name', ignoreRecord: true),
                 TextInput::make('dp_group')
-                    ->label('Nama Grup Bagian'),
+                    ->label('Nama Grup Unit'),
                 Toggle::make('dp_spr')
                     ->label('Ketersediaan SPR')
                     ->default(true),
@@ -80,7 +80,7 @@ class DepartmentResource extends Resource
                 ->boolean(),
         ];
 
-        if ($user->role === 'Administrator' || $user->department->dp_name === 'SISFO') {
+        if ($user->role === 'Administrator') {
             $columns[] = TextColumn::make('created_at')
                 ->label('Created At')
                 ->dateTime()
@@ -116,7 +116,7 @@ class DepartmentResource extends Resource
                         ->action(fn (Department $record) => $record->delete())
                         ->requiresConfirmation()
                         ->modalIcon('heroicon-o-trash')
-                        ->modalHeading('Hapus Data Bagian')
+                        ->modalHeading('Hapus Data Unit')
                         ->modalDescription('Apakah yakin ingin menghapus data?')
                         ->modalSubmitActionLabel('Ya'),
                 ])
