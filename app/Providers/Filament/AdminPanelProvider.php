@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\StatsOverview;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -70,6 +71,11 @@ class AdminPanelProvider extends PanelProvider
                     ->canViewThemesPage(fn () => auth()->user()?->role === 'Administrator')
             )
             ->databaseNotifications(true)
-            ->databaseNotificationsPolling('2s');
+            ->databaseNotificationsPolling('2s')
+            ->font(
+                'Poppins',
+                url: asset('fonts/Poppins-Medium.ttf'),
+                provider: LocalFontProvider::class,
+            );
     }
 }
